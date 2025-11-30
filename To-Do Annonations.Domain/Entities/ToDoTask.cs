@@ -12,5 +12,6 @@ namespace To_Do_Annonations.Domain.Entities
         public string? Description { get; set; }
         public TaskStatus Status { get; set; } = TaskStatus.NotStarted;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int UserId { get; set; }
     }
 }

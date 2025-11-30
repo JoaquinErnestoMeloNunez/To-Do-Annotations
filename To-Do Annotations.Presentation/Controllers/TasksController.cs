@@ -14,45 +14,54 @@ namespace To_Do_Annotations.Presentation.Controllers
             _context = context;
         }
 
-        // GET: ToDoTasks
+        // GET: Tasks
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Tasks.ToListAsync());
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Access");
+            }
+
+            var myTasks = await _context.Tasks
+                                        .Where(t => t.UserId == userId)
+                                        .ToListAsync();
+
+            return View(myTasks);
         }
 
-        // GET: ToDoTasks/Details/5
+        // GET: Tasks/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (HttpContext.Session.GetInt32("UserId") == null) return RedirectToAction("Login", "Access");
 
-            var toDoTask = await _context.Tasks
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (toDoTask == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+
+            var toDoTask = await _context.Tasks.FirstOrDefaultAsync(m => m.Id == id);
+            if (toDoTask == null) return NotFound();
 
             return View(toDoTask);
         }
 
-        // GET: ToDoTasks/Create
+        // GET: Tasks/Create
         public IActionResult Create()
         {
+            if (HttpContext.Session.GetInt32("UserId") == null) return RedirectToAction("Login", "Access");
             return View();
         }
 
-        // POST: ToDoTasks/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Tasks/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,Status,CreatedAt")] ToDoTask toDoTask)
         {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login", "Access");
+
             if (ModelState.IsValid)
             {
+                toDoTask.UserId = userId.Value;
+
                 _context.Add(toDoTask);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -60,33 +69,27 @@ namespace To_Do_Annotations.Presentation.Controllers
             return View(toDoTask);
         }
 
-        // GET: ToDoTasks/Edit/5
+        // GET: Tasks/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (HttpContext.Session.GetInt32("UserId") == null) return RedirectToAction("Login", "Access");
+
+            if (id == null) return NotFound();
 
             var toDoTask = await _context.Tasks.FindAsync(id);
-            if (toDoTask == null)
-            {
-                return NotFound();
-            }
+            if (toDoTask == null) return NotFound();
+
             return View(toDoTask);
         }
 
-        // POST: ToDoTasks/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Tasks/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Status,CreatedAt")] ToDoTask toDoTask)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Status,CreatedAt,UserId")] ToDoTask toDoTask)
         {
-            if (id != toDoTask.Id)
-            {
-                return NotFound();
-            }
+            if (HttpContext.Session.GetInt32("UserId") == null) return RedirectToAction("Login", "Access");
+
+            if (id != toDoTask.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -97,43 +100,34 @@ namespace To_Do_Annotations.Presentation.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ToDoTaskExists(toDoTask.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!ToDoTaskExists(toDoTask.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(toDoTask);
         }
 
-        // GET: ToDoTasks/Delete/5
+        // GET: Tasks/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (HttpContext.Session.GetInt32("UserId") == null) return RedirectToAction("Login", "Access");
 
-            var toDoTask = await _context.Tasks
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (toDoTask == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+
+            var toDoTask = await _context.Tasks.FirstOrDefaultAsync(m => m.Id == id);
+            if (toDoTask == null) return NotFound();
 
             return View(toDoTask);
         }
 
-        // POST: ToDoTasks/Delete/5
+        // POST: Tasks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (HttpContext.Session.GetInt32("UserId") == null) return RedirectToAction("Login", "Access");
+
             var toDoTask = await _context.Tasks.FindAsync(id);
             if (toDoTask != null)
             {

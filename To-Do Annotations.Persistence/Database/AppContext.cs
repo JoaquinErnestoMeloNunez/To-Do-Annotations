@@ -9,5 +9,6 @@ namespace To_Do_Annotations.Persistence.Database
         {
         }
         public DbSet<ToDoTask> Tasks { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
