@@ -12,7 +12,7 @@ namespace To_Do_Annotations.Presentation.Controllers
             _context = context;
         }
 
-        // GET: /Access/Login (Muestra el formulario)
+        // GET: /Access/Login 
         public IActionResult Login()
         {
             // Si ya está logueado, lo mandamos a sus tareas
@@ -23,17 +23,15 @@ namespace To_Do_Annotations.Presentation.Controllers
             return View();
         }
 
-        // POST: /Access/Login (Recibe los datos del form)
+        // POST: /Access/Login
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            // Buscamos usuario en BD (Sin APIs, consulta directa)
             var user = _context.Users
                 .FirstOrDefault(u => u.Username == username && u.Password == password);
 
             if (user != null)
             {
-                // Guardamos el ID en la "memoria" del servidor (Session)
                 HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("Username", user.Username);
 
@@ -67,7 +65,7 @@ namespace To_Do_Annotations.Presentation.Controllers
         // GET: /Access/Logout
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear(); // Borra la sesión
+            HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
     }

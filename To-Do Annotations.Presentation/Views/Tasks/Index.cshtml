@@ -37,7 +37,19 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Status)
+                @*@Html.DisplayFor(modelItem => item.Status)*@
+                    @if ((int)item.Status == 2)
+                    {
+                        <span class="badge bg-success">Completado</span>
+                    }
+                    else if ((int)item.Status == 1)
+                    {
+                        <span class="badge bg-warning text-dark">Pendiente</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">No Iniciado</span>
+                    }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)

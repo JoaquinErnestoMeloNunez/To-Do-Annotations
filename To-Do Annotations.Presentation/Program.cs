@@ -12,10 +12,10 @@ namespace To_Do_Annotations.Presentation
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Context"))
             );
 
-            // SERVICIO DE SESIÓN
+            // Service de sesion
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(30); // 30 minutos de tiempo de sesion posee el user
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
